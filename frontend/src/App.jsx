@@ -56,7 +56,14 @@ export default function App() {
           Add
         </button>
       </form>
-      Dhanush
+
+      <a
+        href="/newPage"
+        className="p-3 bg-white text-black m-2 hover:bg-slate-500 rounded"
+      >
+        Take me to next Page
+      </a>
+
       <DisplayArea notes={NotesArray} />
     </div>
   );
