@@ -2,9 +2,7 @@ export default function DisplayArea(Props) {
   let notes = Props.notes;
 
   return (
-
-    <div className="flex flex-wrap justify-evenly bg-slate-700 w-full">
-
+    <div className="flex w-fit flex-wrap justify-start">
       {notes.map((item, i) => (
         <div
           key={i}
@@ -14,8 +12,6 @@ export default function DisplayArea(Props) {
           <p>{item.content}</p>
         </div>
       ))}
-      
     </div>
-
   );
 }

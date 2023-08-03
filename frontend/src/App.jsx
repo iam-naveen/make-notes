@@ -14,8 +14,7 @@ export default function App() {
       content: content,
     };
 
-    setNotesArray((prev) => [...prev, formData]);
-    console.log(NotesArray);
+    setNotesArray((prev) => [formData, ...prev]);
   }
 
   function handleTitleChange(event) {
@@ -57,7 +56,7 @@ export default function App() {
           Add
         </button>
       </form>
-
+      Dhanush
       <DisplayArea notes={NotesArray} />
     </div>
   );
