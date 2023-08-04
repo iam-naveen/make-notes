@@ -23,6 +23,18 @@ app.get("/getNotes", function (req, res) {
   });
 });
 
+app.get("/getNote/:id", function (req, res) {
+  const noteId = req.params.id;
+  Note.findById(noteId)
+    .then((data) => {
+      res.status(200).send(data);
+    })
+    .catch((error) => {
+      console.error("Error getting note:", error);
+      res.status(500).send("Error getting note");
+    });
+});
+
 app.delete("/deleteNote/:id", function (req, res) {
   const noteId = req.params.id;
   Note.findByIdAndDelete(noteId)

@@ -26,12 +26,13 @@ export default function NotesList() {
         >
           <div className="text-left content w-56">
             <h1 className="text-slate-300">{item.title}</h1>
-            <p className="text-slate-600 max-h-20 truncate">
-              {item.content}
-            </p>
+            <p className="text-slate-600 max-h-20 truncate">{item.content}</p>
           </div>
           <div className="buttons flex items-center justify-evenly gap-3 mt-3">
-            <a className="bg-sky-700 rounded px-2 py-1 text-sky-950 cursor-pointer hover:bg-sky-500">
+            <a
+              href={`/view/${item._id}`}
+              className="bg-sky-700 rounded px-2 py-1 text-sky-950 cursor-pointer hover:bg-sky-500"
+            >
               Show More
             </a>
             <a
