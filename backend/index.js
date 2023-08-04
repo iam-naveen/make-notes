@@ -8,8 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
-app.post("/create", function (req, res) {
+app.post("/addNote", function (req, res) {
   const data = req.body;
 
   const entry = new Note(data);
@@ -20,12 +19,11 @@ app.post("/create", function (req, res) {
 
 app.get("/getNotes", function (req, res) {
   Note.find({}).then((data) => {
-    res.send(data);
-    console.log(data);
+    res.status(200).send(data);
   });
 });
 
-app.delete("/removeNote/:id", function (req, res) {
+app.delete("/deleteNote/:id", function (req, res) {
   const noteId = req.params.id;
   Note.findByIdAndDelete(noteId)
     .then(() => {
@@ -36,7 +34,6 @@ app.delete("/removeNote/:id", function (req, res) {
       res.status(500).send("Error deleting note");
     });
 });
-
 
 mongoose
   .connect(
