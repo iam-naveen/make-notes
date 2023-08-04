@@ -35,6 +35,20 @@ app.get("/getNote/:id", function (req, res) {
     });
 });
 
+app.put("/updateNote/:id", function (req, res) {
+  const id = req.params.id;
+  const data = req.body;
+
+  Note.findOneAndUpdate({ _id: id }, data)
+    .then(() => {
+      res.send("Note Updated successfully");
+    })
+    .catch((error) => {
+      console.error("Error deleting note:", error);
+      res.status(500).send("Error Updating note");
+    });
+});
+
 app.delete("/deleteNote/:id", function (req, res) {
   const noteId = req.params.id;
   Note.findByIdAndDelete(noteId)
