@@ -2,63 +2,94 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 
-import Note from "./models/Note.js";
+import Todo from "./models/Todo.js";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/addNote", function (req, res) {
-  const data = req.body;
+app.post("/todos", async (req, res) => {
+  try {
+    const { title, description } = req.body;
 
-  const entry = new Note(data);
-  entry.save();
-
-  res.status(200).send();
-});
-
-app.get("/getNotes", function (req, res) {
-  Note.find({}).then((data) => {
-    res.status(200).send(data);
-  });
-});
-
-app.get("/getNote/:id", function (req, res) {
-  const noteId = req.params.id;
-  Note.findById(noteId)
-    .then((data) => {
-      res.status(200).send(data);
-    })
-    .catch((error) => {
-      console.error("Error getting note:", error);
-      res.status(500).send("Error getting note");
+    const newTodo = new Todo({
+      title,
+      description,
     });
+
+    const savedTodo = await newTodo.save();
+    res.status(201).json(savedTodo);
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Failed to create Todo item", error: err.message });
+  }
 });
 
-app.put("/updateNote/:id", function (req, res) {
-  const id = req.params.id;
-  const data = req.body;
-
-  Note.findOneAndUpdate({ _id: id }, data)
-    .then(() => {
-      res.send("Note Updated successfully");
-    })
-    .catch((error) => {
-      console.error("Error deleting note:", error);
-      res.status(500).send("Error Updating note");
-    });
+app.get("/todos", async (req, res) => {
+  try {
+    const todos = await Todo.find();
+    res.json(todos);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch Todo items", error: err.message });
+  }
 });
 
-app.delete("/deleteNote/:id", function (req, res) {
-  const noteId = req.params.id;
-  Note.findByIdAndDelete(noteId)
-    .then(() => {
-      res.send("Note deleted successfully");
-    })
-    .catch((error) => {
-      console.error("Error deleting note:", error);
-      res.status(500).send("Error deleting note");
-    });
+app.put("/todos/:id", async (req, res) => {
+  try {
+    const { title, description, completed } = req.body;
+    const todoId = req.params.id;
+
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      todoId,
+      { title, description, completed },
+      { new: true }
+    );
+
+    res.json(updatedTodo);
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Failed to update Todo item", error: err.message });
+  }
+});
+
+app.delete("/todos/:id", async (req, res) => {
+  try {
+    const todoId = req.params.id;
+
+    const deletedTodo = await Todo.findByIdAndDelete(todoId);
+    res.json(deletedTodo);
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Failed to delete Todo item", error: err.message });
+  }
+});
+
+app.patch("/todos/:id/done", async (req, res) => {
+  try {
+    const todoId = req.params.id;
+    const { completed } = req.body;
+
+    if (typeof completed !== "boolean") {
+      return res.status(400).json({ message: "Invalid completed status" });
+    }
+
+    const updatedTodo = await Todo.findByIdAndUpdate(
+      todoId,
+      { completed },
+      { new: true }
+    );
+
+    res.json(updatedTodo);
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Failed to update Todo item", error: err.message });
+  }
 });
 
 mongoose
@@ -66,7 +97,6 @@ mongoose
     "mongodb+srv://root:PNEoZEIU5ajO6EQp@test.jz2qknw.mongodb.net/?retryWrites=true&w=majority"
   )
   .then(() => {
-    // Server Running in PORT 8000
     app.listen(8000, () => console.log("Server is running"));
   })
   .catch((err) => {
