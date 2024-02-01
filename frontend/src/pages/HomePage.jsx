@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const TodoPage = () => {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(undefined);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [editingTodoId, setEditingTodoId] = useState(null);
@@ -136,28 +136,25 @@ const TodoPage = () => {
         <div className="mt-8">
           <h2 className="text-xl font-bold text-gray-900">Todo List</h2>
           <ul className="mt-4 space-y-2 bg-slate-800 p-5 rounded-md">
-            {todos.length ? (todos.map((todo) => (
+            {todos ? (todos.length ? (todos.map((todo) => (
               <li
                 key={todo._id}
-                className={`flex items-center justify-between bg-white p-4 shadow rounded-lg ${
-                  todo.completed ? " bg-slate-300" : ""
-                }`}
+                className={`flex items-center justify-between bg-white p-4 shadow rounded-lg ${todo.completed ? " bg-slate-300" : ""
+                  }`}
               >
                 <span
-                  className={`flex-grow ${
-                    todo.completed ? "line-through" : ""
-                  }`}
+                  className={`flex-grow ${todo.completed ? "line-through" : ""
+                    }`}
                 >
                   {todo.title} - {todo.description}
                 </span>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleUpdateTodo(todo._id, todo.completed)}
-                    className={`px-2 py-1 rounded ${
-                      todo.completed
+                    className={`px-2 py-1 rounded ${todo.completed
                         ? "bg-yellow-500 text-white"
                         : "bg-green-500 text-white"
-                    }`}
+                      }`}
                   >
                     {todo.completed ? "Incomplete" : "Complete"}
                   </button>
@@ -175,7 +172,10 @@ const TodoPage = () => {
                   </button>
                 </div>
               </li>
-            ))): (<div className="text-white">No Todos to Display</div>)}
+            ))) : (<div className="text-white">No Todos to Display</div>)) : (
+              <div className="text-white">Loading...</div>
+            )
+            }
           </ul>
         </div>
       </div>

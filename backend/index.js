@@ -26,7 +26,7 @@ app.post("/todos", async (req, res) => {
   }
 });
 
-app.get("/todos", async (req, res) => {
+app.get("/todos", async (_req, res) => {
   try {
     const todos = await Todo.find();
     res.json(todos);
@@ -56,6 +56,18 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
+app.delete("/todos/:id", async (req, res) => {
+  try {
+    const todoId = req.params.id;
+    await Todo.findByIdAndDelete(todoId);
+    res.json({ message: "Todo item deleted successfully" });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Failed to delete Todo item", error: err.message });
+  }
+})
+
 app.patch("/todos/:id/done", async (req, res) => {
   try {
     const todoId = req.params.id;
@@ -80,9 +92,7 @@ app.patch("/todos/:id/done", async (req, res) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://root:PNEoZEIU5ajO6EQp@test.jz2qknw.mongodb.net/?retryWrites=true&w=majority"
-  )
+  .connect("mongodb+srv://root:root@test.jz2qknw.mongodb.net/?retryWrites=true&w=majority")
   .then(() => {
     app.listen(8000, () => console.log("Server is running"));
   })
