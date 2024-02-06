@@ -1,32 +1,29 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 import Todo from "./models/Todo.js";
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+const server = express();
+server.use(express.json());
+server.use(cors());
+dotenv.config();
 
-app.post("/todos", async (req, res) => {
+server.post("/todos", async (req, res) => {
   try {
     const { title, description } = req.body;
-
-    const newTodo = new Todo({
-      title,
-      description,
-    });
-
-    const savedTodo = await newTodo.save();
-    res.status(201).json(savedTodo);
+    const newTodo = new Todo({ title, description });
+    await newTodo.save();
+    res.status(201).send()
   } catch (err) {
     res
-      .status(400)
+      .status(500)
       .json({ message: "Failed to create Todo item", error: err.message });
   }
 });
 
-app.get("/todos", async (_req, res) => {
+server.get("/todos", async (_req, res) => {
   try {
     const todos = await Todo.find();
     res.json(todos);
@@ -37,7 +34,7 @@ app.get("/todos", async (_req, res) => {
   }
 });
 
-app.put("/todos/:id", async (req, res) => {
+server.put("/todos/:id", async (req, res) => {
   try {
     const { title, description, completed } = req.body;
     const todoId = req.params.id;
@@ -56,7 +53,7 @@ app.put("/todos/:id", async (req, res) => {
   }
 });
 
-app.delete("/todos/:id", async (req, res) => {
+server.delete("/todos/:id", async (req, res) => {
   try {
     const todoId = req.params.id;
     await Todo.findByIdAndDelete(todoId);
@@ -68,7 +65,7 @@ app.delete("/todos/:id", async (req, res) => {
   }
 })
 
-app.patch("/todos/:id/done", async (req, res) => {
+server.patch("/todos/:id/done", async (req, res) => {
   try {
     const todoId = req.params.id;
     const { completed } = req.body;
@@ -92,9 +89,9 @@ app.patch("/todos/:id/done", async (req, res) => {
 });
 
 mongoose
-  .connect("mongodb+srv://root:root@test.jz2qknw.mongodb.net/?retryWrites=true&w=majority")
+  .connect(process.env.DB)
   .then(() => {
-    app.listen(8000, () => console.log("Server is running"));
+    server.listen(8000, () => console.log("Server is running"));
   })
   .catch((err) => {
     console.log(err);
